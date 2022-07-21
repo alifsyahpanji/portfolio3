@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Alifsyah Crypto</title>
+
+    <!--Load Library Start-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="assets/style.css">
+
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!--Load Library End-->
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+        crossorigin="anonymous"></script>
+
+    <!--Java Script Start-->
+    <script type="text/babel">
+
+        //Header 
+        function Header() {
+            return (
+                <header>
+                    <Navbar />
+                    <Banner />
+
+                </header>
+            );
+        }
+
+
+
+        //Navbar
+        function Navbar() {
+            return (
+
+                <nav class="navbar bg-warning">
+                    <div class="container-fluid d-flex">
+                        <div class="me-auto p-2"> <a class="navbar-brand fw-bold" href="#">Alifsyah Crypto</a></div>
+                        <div class="p-2 menupc fw-semibold me-2"><a href="#market">Market</a></div>
+                        <div class="p-2 menupc fw-semibold"><a href="#about">About</a></div>
+
+                    </div>
+                </nav>
+            );
+        }
+
+
+        //Banner 
+        function Banner() {
+            return (
+                <div class="container-fluid banner bg-dark">
+                    <div class="row text-white">
+                        <div class="col-md-6 my-4 pt-4">
+                            <h1>Cryptocurrency</h1>
+                            <h5 class="mt-5">Miliki aset masa depan mu bersama kami,</h5>
+                            <h5 class="mt-2">Ayo pilih cryptocurrency favorit mu dan dapatkan</h5>
+                            <h5 class="mt-2">semua yang kamu inginkan.</h5>
+                            <button type="button" class="btn gradient text-white btn-lg mt-4">Join Now</button>
+
+                        </div>
+
+                        <div class="col-md-6 my-4" ><img src="assets/banner.jpg" class="bannercustom img-fluid" alt="" /></div>
+
+                    </div>
+
+                </div>
+            );
+        }
+
+        //Main 
+        function Main() {
+            return (
+                <main>
+                    <Content />
+
+                </main>
+            );
+        }
+
+
+        //Content
+        function Content() {
+            return (
+                <main class="gradient pt-4 pb-4">
+                    <div id="market" class="card mx-4">
+                        <h5 class="card-header text-center">Market</h5>
+                        <div class="card-body">
+                            <Table />
+                        </div>
+                    </div>
+
+                </main>
+            );
+        }
+
+
+        function roundData(rd) {
+            let rv = Math.round(rd);
+            if (rv == 0) {
+                return rd;
+            } else {
+                return rv;
+            }
+        }
+
+        class Table extends React.Component {
+            constructor(props) {
+                super(props);
+                this.state = {
+                    error: null,
+                    isLoaded: false,
+                    items: []
+                };
+            }
+
+            componentDidMount() {
+                fetch("https://api.coincap.io/v2/assets")
+                    .then(res => res.json())
+                    .then(
+                        (result) => {
+                            this.setState({
+                                isLoaded: true,
+                                items: result.data
+                            });
+                        },
+                        // Note: it's important to handle errors here
+                        // instead of a catch() block so that we don't swallow
+                        // exceptions from actual bugs in components.
+                        (error) => {
+                            this.setState({
+                                isLoaded: true,
+                                error
+                            });
+                        }
+                    )
+            }
+
+            render() {
+                const { error, isLoaded, items } = this.state;
+                if (error) {
+                    return <div>Error: {error.message}</div>;
+                } else if (!isLoaded) {
+                    return (
+                        <div class="d-flex justify-content-center">
+                            <div class="loader"></div>
+                        </div>
+                    );
+                } else {
+                    return (
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Rank</th>
+                                        <th>Name</th>
+                                        <th>Price</th>
+                                        <th>Change 24H</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    {items.map(item => (
+                                        <tr>
+                                            <td>{item.rank}</td>
+                                            <td>{item.name}</td>
+                                            <td>${roundData(item.priceUsd)}</td>
+                                            <td>{roundData(item.changePercent24Hr)}%</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    );
+                }
+            }
+        }
+
+        // Footer
+        function Footer() {
+            return (
+                <footer>
+                    <About />
+                    <End />
+
+                </footer>
+            );
+        }
+
+        // About
+        function About() {
+            return (
+                <section id="about" class="container-fluid about bg-dark">
+                    <div class="row text-white">
+
+                        <div class="col-md-5 col-12 offset-md-1 my-4 pt-4" ><img src="assets/logo.jpg" class="logocustom img-fluid" alt="" /></div>
+
+                        <div class="col-md-5 col-12 my-4 pt-4">
+                            <h1>About</h1>
+                            <h5 class="mt-5">Alifsyah Crypto adalah tempat untuk</h5>
+                            <h5 class="mt-2">bertransaksi dan menyimpan asset crypto masa kini</h5>
+                            <div>
+                                <span class="linkicon"><i class="bi bi-facebook"></i></span>
+                                <span class="linkicon"><i class="bi bi-instagram"></i></span>
+                                <span class="linkicon"><i class="bi bi-whatsapp"></i></span>
+                            </div>
+
+
+
+                        </div>
+
+
+
+                    </div>
+                </section>
+            );
+        }
+
+        // End
+        function End() {
+            return (
+                <section className="fotcustom bg-warning">
+                    <h6 className="text-center py-3">&copy; Copyright Alifsyah Panji 2022</h6>
+
+                </section>
+            );
+        }
+
+
+
+        function App() {
+            return (
+                <div>
+                    <Header />
+                    <Main />
+                    <Footer />
+
+                </div>
+            );
+        }
+
+        ReactDOM.render(
+            <App />,
+            document.getElementById('root')
+        );
+
+
+    </script>
+
+</body>
+
+</html>
